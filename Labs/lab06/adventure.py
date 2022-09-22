@@ -16,11 +16,11 @@ def adv_parse(line):
     command = tokens.pop(0)
     if command in ('talk', 'go'):
         if not tokens or tokens[0] != 'to':
-            raise SyntaxError('Did you mean "{}"?'.format(COMMAND_FORMATS[command]))
-        return (command + '_to', ' '.join(tokens[1:]))
+            raise SyntaxError(f'Did you mean "{COMMAND_FORMATS[command]}"?')
+        return f'{command}_to', ' '.join(tokens[1:])
     elif command == 'check':
         if not tokens or tokens[0] != 'backpack':
-            raise SyntaxError('Did you mean "{}"?'.format(COMMAND_FORMATS['check backpack']))
+            raise SyntaxError(f"""Did you mean "{COMMAND_FORMATS['check backpack']}"?""")
         return ('check_backpack', '')
     elif command == 'unlock':
         return ('unlock', ' '.join(tokens))
@@ -35,7 +35,7 @@ def adv_eval(exp):
     operator, operand = exp[0], exp[1]
     if operator not in COMMAND_NUM_ARGS:
         help()
-        raise SyntaxError('Invalid command: {}'.format(operator))
+        raise SyntaxError(f'Invalid command: {operator}')
     elif operator in SPECIAL_FORMS:
         function = SPECIAL_FORMS[operator]
     else:
@@ -47,7 +47,7 @@ def adv_eval(exp):
         function(operand)
 
 def help():
-    print('There are {} possible commands:'.format(len(COMMAND_FORMATS)))
+    print(f'There are {len(COMMAND_FORMATS)} possible commands:')
     for usage in COMMAND_FORMATS.values():
         print('   ', usage)
 
@@ -60,10 +60,9 @@ def check_win_state(player):
     player_backpack = player.check_backpack()
     if 'Smoothie' in player_backpack and 'Lemon' in player_backpack:
         return True
-    else:
-        print()
-        print("Looks like you're missing some items. Can't go to the study party yet!")
-        return False
+    print()
+    print("Looks like you're missing some items. Can't go to the study party yet!")
+    return False
 
 ########
 # REPL #

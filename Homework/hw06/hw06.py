@@ -82,11 +82,10 @@ class FreeChecking(Account):
 
     "*** YOUR CODE HERE ***"
     def withdraw(self, amount):
-        if self.free_withdrawals > 0:
-            self.free_withdrawals -= 1
-            return Account.withdraw(self, amount)
-        else:
+        if self.free_withdrawals <= 0:
             return Account.withdraw(self, amount + self.withdraw_fee)
+        self.free_withdrawals -= 1
+        return Account.withdraw(self, amount)
 
 ###########
 # Mobiles #
@@ -112,10 +111,7 @@ def is_tree(tree):
     """Returns True if the given tree is a tree, and False otherwise."""
     if type(tree) != list or len(tree) < 1:
         return False
-    for branch in branches(tree):
-        if not is_tree(branch):
-            return False
-    return True
+    return all(is_tree(branch) for branch in branches(tree))
 
 def is_leaf(tree):
     """Returns True if the given tree's list of branches is empty, and False
@@ -180,10 +176,7 @@ def total_weight(m):
     >>> total_weight(v)
     9
     """
-    if is_weight(m):
-        return size(m)
-    else:
-        return sum([total_weight(end(s)) for s in sides(m)])
+    return size(m) if is_weight(m) else sum(total_weight(end(s)) for s in sides(m))
 
 def balanced(m):
     """Return whether m is balanced.
@@ -204,12 +197,13 @@ def balanced(m):
     "*** YOUR CODE HERE ***"
     if is_weight(m):
         return True
-    else:
-        left, right = sides(m)
-        if (length(left) * total_weight(end(left))) != (length(right) * total_weight(end(right))):
-            return False
-        else:
-            return balanced(end(left)) and balanced(end(right))
+    left, right = sides(m)
+    return (
+        False
+        if (length(left) * total_weight(end(left)))
+        != (length(right) * total_weight(end(right)))
+        else balanced(end(left)) and balanced(end(right))
+    )
 
 
 
@@ -229,18 +223,14 @@ def with_totals(m):
     [None, None]
     """
     "*** YOUR CODE HERE ***"
-# My solution
-    if is_weight(m):
-        return m
-    else:
-        return tree(total_weight(m), [tree(length(s), [with_totals(end(s))]) for s in sides(m)])
-
-# Official solution
-    if is_weight(m):
-        return m
-    ends = [with_totals(end(s)) for s in sides(m)]
-    total = sum([label(s) for s in ends])
-    return tree(total, [side(length(s), t) for s, t in zip(sides(m), ends)])
+    return (
+        m
+        if is_weight(m)
+        else tree(
+            total_weight(m),
+            [tree(length(s), [with_totals(end(s))]) for s in sides(m)],
+        )
+    )
 
 ############
 # Mutation #
@@ -278,14 +268,7 @@ def make_counter():
         else:
             str_dict.setdefault(string, 1)
             return str_dict[string]
-    return counter
 
-# Official solution
-
-    totals = {}
-    def counter(key):
-        totals[key] = totals.get(key, 0) + 1
-        return totals[key]
     return counter
 
 
@@ -329,15 +312,6 @@ def make_fib():
 
     return next_fib
 
-# Official solution
-    cur, next = 0, 1
-    def fib():
-        nonlocal cur, next
-        result = cur
-        cur, next = next, cur + next
-        return result
-    return fib
-
 
 def make_withdraw(balance, password):
     """Return a password-protected withdraw function.
@@ -375,7 +349,7 @@ def make_withdraw(balance, password):
             else:
                 return 'Insufficient funds'
         elif len(attempts) == 3:
-            return "Your account is locked. Attempts: " + str(attempts)
+            return f"Your account is locked. Attempts: {attempts}"
         else:
             attempts.append(string)
             return 'Incorrect password'

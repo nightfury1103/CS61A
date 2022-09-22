@@ -37,19 +37,20 @@ def trace(fn):
     def wrapped(*args, **kwds):
         global _PREFIX
         reprs = [repr(e) for e in args]
-        reprs += [repr(k) + '=' + repr(v) for k, v in kwds.items()]
+        reprs += [f'{repr(k)}={repr(v)}' for k, v in kwds.items()]
         log('{0}({1})'.format(fn.__name__, ', '.join(reprs)) + ':')
         _PREFIX += '    '
         try:
             result = fn(*args, **kwds)
             _PREFIX = _PREFIX[:-4]
         except Exception as e:
-            log(fn.__name__ + ' exited via exception')
+            log(f'{fn.__name__} exited via exception')
             _PREFIX = _PREFIX[:-4]
             raise
         # Here, print out the return value.
         log('{0}({1}) -> {2}'.format(fn.__name__, ', '.join(reprs), result))
         return result
+
     return wrapped
 
 
@@ -82,12 +83,16 @@ def interact(msg=None):
     def handler(signum, frame):
         print()
         exit(0)
+
     signal.signal(signal.SIGINT, handler)
 
     if not msg:
         _, filename, line, _, _, _ = inspect.stack()[1]
-        msg = 'Interacting at File "{0}", line {1} \n'.format(filename, line)
-        msg += '    Unix:    <Control>-D continues the program; \n'
+        msg = (
+            'Interacting at File "{0}", line {1} \n'.format(filename, line)
+            + '    Unix:    <Control>-D continues the program; \n'
+        )
+
         msg += '    Windows: <Control>-Z <Enter> continues the program; \n'
         msg += '    exit() or <Control>-C exits the program'
 

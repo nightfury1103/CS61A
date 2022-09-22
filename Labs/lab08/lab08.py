@@ -13,10 +13,7 @@ def deep_len(lnk):
     """
     "*** YOUR CODE HERE ***"
     if isinstance(lnk.first, int):
-        if lnk.rest is Link.empty:
-            return 1
-        else:
-            return 1 + deep_len(lnk.rest)
+        return 1 if lnk.rest is Link.empty else 1 + deep_len(lnk.rest)
     else:
         return deep_len(lnk.first) + deep_len(lnk.rest)
 
@@ -145,9 +142,9 @@ class Link:
 
     def __repr__(self):
         if self.rest is Link.empty:
-            return 'Link({})'.format(self.first)
+            return f'Link({self.first})'
         else:
-            return 'Link({}, {})'.format(self.first, repr(self.rest))
+            return f'Link({self.first}, {repr(self.rest)})'
 
     def __str__(self):
         """Returns a human-readable string representation of the Link
@@ -162,7 +159,7 @@ class Link:
         """
         string = '<'
         while self.rest is not Link.empty:
-            string += str(self.first) + ' '
+            string += f'{str(self.first)} '
             self = self.rest
         return string + str(self.first) + '>'
 
@@ -175,10 +172,7 @@ class Tree:
         self.branches = list(branches)
 
     def __repr__(self):
-        if self.branches:
-            branches_str = ', ' + repr(self.branches)
-        else:
-            branches_str = ''
+        branches_str = f', {repr(self.branches)}' if self.branches else ''
         return 'Tree({0}{1})'.format(self.label, branches_str)
 
     def is_leaf(self):

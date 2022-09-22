@@ -28,12 +28,7 @@ DELIMITERS = _SINGLE_CHAR_TOKENS | {'.', ',', ',@'}
 
 def valid_symbol(s):
     """Returns whether s is a well-formed symbol."""
-    if len(s) == 0:
-        return False
-    for c in s:
-        if c not in _SYMBOL_CHARS:
-            return False
-    return True
+    return False if len(s) == 0 else all(c in _SYMBOL_CHARS for c in s)
 
 def next_candidate_token(line, k):
     """A tuple (tok, k'), where tok is the next substring of line at or

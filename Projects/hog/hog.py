@@ -31,10 +31,7 @@ def roll_dice(num_rolls, dice=six_sided):
         else:
             sum += curr
         num_rolls -= 1
-    if have_num_one:
-        return 1
-    else:
-        return sum
+    return 1 if have_num_one else sum
     # END PROBLEM 1
 
 
@@ -164,9 +161,10 @@ def announce_lead_changes(previous_leader=None):
             leader = 1
         else:
             leader = None
-        if leader != None and leader != previous_leader:
+        if leader not in [None, previous_leader]:
             print('Player', leader, 'takes the lead by', abs(score0 - score1))
         return announce_lead_changes(leader)
+
     return say
 
 
@@ -189,7 +187,7 @@ def both(f, g):
         f1 = f(score0, score1)
         g1 = g(score0, score1)  # 'g' has been updated since called
         return both(f1, g1)  # 'f' and 'g' should be updated to the new func
-        """actually this suite can be abbreviated to 'return both(f(score0, score1), g(score0, score1))'"""
+
     return say
     # END PROBLEM 6
 
@@ -209,7 +207,7 @@ def announce_highest(who, previous_high=0, previous_score=0):
     20 points! That's the biggest gain yet for Player 1
     >>> f6 = f5(20, 55) # Player 1 gets 15 points; not enough for a new high
     """
-    assert who == 0 or who == 1, 'The who argument should indicate a player.'
+    assert who in [0, 1], 'The who argument should indicate a player.'
     # BEGIN PROBLEM 7
     "*** YOUR CODE HERE ***"
     def say(score0, score1):
@@ -227,6 +225,7 @@ def announce_highest(who, previous_high=0, previous_score=0):
                 print(current_score, "points! That's the biggest gain yet for Player", who)
             previous_high = current_score  # Only when current_score > previous_high this statement was executed
         return announce_highest(who, previous_high, previous_score)
+
     return say
     # END PROBLEM 7
 
@@ -305,10 +304,7 @@ def max_scoring_num_rolls(dice=six_sided, num_samples=1000):
 def winner(strategy0, strategy1):
     """Return 0 if strategy0 wins against strategy1, and 1 otherwise."""
     score0, score1 = play(strategy0, strategy1)
-    if score0 > score1:
-        return 0
-    else:
-        return 1
+    return 0 if score0 > score1 else 1
 
 
 def average_win_rate(strategy, baseline=always_roll(4)):
@@ -323,21 +319,16 @@ def average_win_rate(strategy, baseline=always_roll(4)):
 
 def run_experiments():
     """Run a series of strategy experiments and report results."""
-    if True:  # Change to False when done finding max_scoring_num_rolls
-        six_sided_max = max_scoring_num_rolls(six_sided)
-        print('Max scoring num rolls for six-sided dice:', six_sided_max)
+    six_sided_max = max_scoring_num_rolls(six_sided)
+    print('Max scoring num rolls for six-sided dice:', six_sided_max)
 
-    if True:  # Change to True to test always_roll(8)
-        print('always_roll(8) win rate:', average_win_rate(always_roll(8)))
+    print('always_roll(8) win rate:', average_win_rate(always_roll(8)))
 
-    if True:  # Change to True to test bacon_strategy
-        print('bacon_strategy win rate:', average_win_rate(bacon_strategy))
+    print('bacon_strategy win rate:', average_win_rate(bacon_strategy))
 
-    if True:  # Change to True to test swap_strategy
-        print('swap_strategy win rate:', average_win_rate(swap_strategy))
+    print('swap_strategy win rate:', average_win_rate(swap_strategy))
 
-    if True:  # Change to True to test final_strategy
-        print('final_strategy win rate:', average_win_rate(final_strategy))
+    print('final_strategy win rate:', average_win_rate(final_strategy))
 
     "*** You may add additional experiments as you wish ***"
 
@@ -347,10 +338,7 @@ def bacon_strategy(score, opponent_score, margin=8, num_rolls=4):
     rolls NUM_ROLLS otherwise.
     """
     # BEGIN PROBLEM 10
-    if free_bacon(opponent_score) >= margin:
-        return 0
-    else:
-        return num_rolls
+    return 0 if free_bacon(opponent_score) >= margin else num_rolls
     # END PROBLEM 10
 
 
@@ -387,21 +375,19 @@ def final_strategy(score, opponent_score):
         if is_swap(score_after_bacon, opponent_score):  # Beneficial swap after bacon
             if opponent_score - score > 10:
                 return 0
-            else:
-                n = 0
-                while (score + n) < opponent_score // 2:
-                    if opponent_score % (score + n) == 0:
-                        if 1 <= n <= 6:
-                            return 1
-                        elif 7 <= n <= 8:
-                            return 2
-                        elif 9 <= n <= 12:
-                            return 3
-                        else:
-                            return 4
-                    n += 1
-                else:
-                    return 4
+            n = 0
+            while (score + n) < opponent_score // 2:
+                if opponent_score % (score + n) == 0:
+                    if 1 <= n <= 6:
+                        return 1
+                    elif 7 <= n <= 8:
+                        return 2
+                    elif 9 <= n <= 12:
+                        return 3
+                    else:
+                        return 4
+                n += 1
+            return 4
         elif opponent_score >= 90 and opponent_score - score > 50:
             return 10
         else:

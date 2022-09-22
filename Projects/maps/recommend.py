@@ -20,8 +20,7 @@ def find_closest(location, centroids):
     """
     # BEGIN Question 3
     "*** YOUR CODE HERE ***"
-    closest_centroid = min(centroids, key=lambda centroid: distance(location, centroid))
-    return closest_centroid
+    return min(centroids, key=lambda centroid: distance(location, centroid))
     # END Question 3
 
 
@@ -66,8 +65,7 @@ def find_centroid(cluster):
         location = restaurant_location(restaurant)
         latitudes += [location[0]]
         longitudes += [location[1]]
-    centroid = [mean(latitudes), mean(longitudes)]
-    return centroid
+    return [mean(latitudes), mean(longitudes)]
     # END Question 5
 
 
@@ -230,7 +228,7 @@ def main(*args):
 
     # Load a user
     assert args.user, 'A --user is required to draw a map'
-    user = load_user_file('{}.dat'.format(args.user))
+    user = load_user_file(f'{args.user}.dat')
 
     # Collect ratings
     if args.predict:

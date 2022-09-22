@@ -11,12 +11,11 @@ def cumulative_sum(t):
     Tree(16, [Tree(8, [Tree(5)]), Tree(7)])
     """
     "*** YOUR CODE HERE ***"
-    if t.is_leaf():  # Actually can be removed
+    if t.is_leaf():
         return
-    else:
-        for b in t.branches:  # Modify the branches before label
-            cumulative_sum(b)
-        t.label = t.label + sum([b.label for b in t.branches])
+    for b in t.branches:  # Modify the branches before label
+        cumulative_sum(b)
+    t.label = t.label + sum(b.label for b in t.branches)
 
 
 # Q7
@@ -119,15 +118,6 @@ def has_cycle(link):
             return has_cycle_helper(link1.rest, cycle)
 
     return has_cycle_helper(link.rest, link_copy)
-
-# Official solution
-    links = []
-    while link is not Link.empty:
-        if link in links:
-            return True
-        links.append(link)
-        link = link.rest
-    return False
 
 
 def has_cycle_constant(link):

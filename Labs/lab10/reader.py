@@ -5,7 +5,7 @@ from expr import *
 
 SYMBOL_STARTS = set(string.ascii_lowercase + string.ascii_uppercase + '_')
 SYMBOL_INNERS = SYMBOL_STARTS | set(string.digits)
-NUMERAL = set(string.digits + '-.')
+NUMERAL = set(f'{string.digits}-.')
 WHITESPACE = set(' \t\n\r')
 DELIMITERS = set('(),:')
 
@@ -42,17 +42,17 @@ def next_token(src):
             try:
                 return float(literal)
             except ValueError:
-                raise SyntaxError("'{}' is not a numeral".format(literal))
+                raise SyntaxError(f"'{literal}' is not a numeral")
     elif c in SYMBOL_STARTS:
         return take(src, SYMBOL_INNERS)
     elif c in DELIMITERS:
         src.remove_front()
         return c
     else:
-        raise SyntaxError("'{}' is not a token".format(c))
+        raise SyntaxError(f"'{c}' is not a token")
 
 def is_literal(s):
-    return isinstance(s, int) or isinstance(s, float)
+    return isinstance(s, (int, float))
 
 def is_name(s):
     return isinstance(s, str) and s not in DELIMITERS and s != 'lambda'
@@ -96,17 +96,16 @@ def read_expr(src):
         src.expect(')')
         return read_call_expr(src, inner_expr)
     else:
-        raise SyntaxError("'{}' is not the start of an expression".format(token))
+        raise SyntaxError(f"'{token}' is not the start of an expression")
 
 def read_comma_separated(src, reader):
     if src.current() in (':', ')'):
         return []
-    else:
-        s = [reader(src)]
-        while src.current() == ',':
-            src.remove_front()
-            s.append(reader(src))
-        return s
+    s = [reader(src)]
+    while src.current() == ',':
+        src.remove_front()
+        s.append(reader(src))
+    return s
 
 def read_call_expr(src, operator):
     while src.current() == '(':
@@ -121,4 +120,4 @@ def read_param(src):
     if is_name(token):
         return token
     else:
-        raise SyntaxError("Expected parameter name but got '{}'".format(token))
+        raise SyntaxError(f"Expected parameter name but got '{token}'")

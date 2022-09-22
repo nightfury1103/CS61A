@@ -9,44 +9,60 @@ def datatype(obj):
 # Generic abstract data type
 class Abstract(object):
     def __add__(self, other):
-        raise AbstractionViolation("Can't add {} object to {}".format(datatype(self), datatype(other)))
+        raise AbstractionViolation(
+            f"Can't add {datatype(self)} object to {datatype(other)}"
+        )
 
     def __radd__(self, other):
-        raise AbstractionViolation("Can't add {} object to {}".format(datatype(self), datatype(other)))
+        raise AbstractionViolation(
+            f"Can't add {datatype(self)} object to {datatype(other)}"
+        )
 
     def __eq__(self, other):
         if isinstance(other, type(self)):
             return other is self
-        raise AbstractionViolation("Can't use == on {} object and {}".format(datatype(self), datatype(other)))
+        raise AbstractionViolation(
+            f"Can't use == on {datatype(self)} object and {datatype(other)}"
+        )
 
     def __ne__(self, other):
         if isinstance(other, type(self)):
             return other is not self
-        raise AbstractionViolation("Can't use != on {} object and {}".format(datatype(self), datatype(other)))
+        raise AbstractionViolation(
+            f"Can't use != on {datatype(self)} object and {datatype(other)}"
+        )
 
     def __bool__(self):
-        raise AbstractionViolation("Can't use {} object as a boolean".format(datatype(self)))
+        raise AbstractionViolation(f"Can't use {datatype(self)} object as a boolean")
 
     def __getitem__(self, index):
-        raise AbstractionViolation("Can't use [] notation on {} object".format(datatype(self)))
+        raise AbstractionViolation(f"Can't use [] notation on {datatype(self)} object")
 
     def __contains__(self, other):
-        raise AbstractionViolation("Can't use contains notation on {} object".format(datatype(self)))
+        raise AbstractionViolation(
+            f"Can't use contains notation on {datatype(self)} object"
+        )
 
     def __delitem__(self, other):
-        raise AbstractionViolation("Can't use del notation on {} object".format(datatype(self)))
+        raise AbstractionViolation(
+            f"Can't use del notation on {datatype(self)} object"
+        )
 
     def __iter__(self):
-        raise AbstractionViolation("Can't iterate on {} object".format(datatype(self)))
+        raise AbstractionViolation(f"Can't iterate on {datatype(self)} object")
 
     def __len__(self):
-        raise AbstractionViolation("Can't use len notation on {} object".format(datatype(self)))
+        raise AbstractionViolation(
+            f"Can't use len notation on {datatype(self)} object"
+        )
 
     def __setitem__(self, key, item):
-        raise AbstractionViolation("Can't use setitem notation on {} object".format(datatype(self)))
+        raise AbstractionViolation(
+            f"Can't use setitem notation on {datatype(self)} object"
+        )
 
     def __call__(self, *args, **kwargs):
-        raise AbstractionViolation("Can't call {} object".format(datatype(self)))
+        raise AbstractionViolation(f"Can't call {datatype(self)} object")
 
     def __hash__(self):
         return id(self)
@@ -55,7 +71,7 @@ class User(Abstract):
     def __init__(self, name, reviews):
         self.a, self.b = name, {review_restaurant_name(r): r for r in reviews}
     def __repr__(self):
-        return '<User {} {}>'.format(self.a, list(map(repr, self.b)))
+        return f'<User {self.a} {list(map(repr, self.b))}>'
 
 make_user = User
 user_name = lambda u: u.a
@@ -67,7 +83,7 @@ class Review(Abstract):
     def __init__(self, restaurant_name, rating):
         self.a, self.b = restaurant_name, rating
     def __repr__(self):
-        return '<Review {} {}>'.format(self.a, self.b)
+        return f'<Review {self.a} {self.b}>'
 
 make_review = Review
 review_restaurant_name = lambda r: r.a
@@ -80,7 +96,7 @@ class Restaurant(Abstract):
         self.g = len(self.e)
         self.h = sum(review_rating(r) for r in self.e) / len(self.e)
     def __repr__(self):
-        return '<Restaurant {}>'.format(self.a)
+        return f'<Restaurant {self.a}>'
 
 make_restaurant = Restaurant
 restaurant_name = lambda r: r.a

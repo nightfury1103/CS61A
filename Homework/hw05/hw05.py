@@ -18,10 +18,7 @@ def is_tree(tree):
     """Returns True if the given tree is a tree, and False otherwise."""
     if type(tree) != list or len(tree) < 1:
         return False
-    for branch in branches(tree):
-        if not is_tree(branch):
-            return False
-    return True
+    return all(is_tree(branch) for branch in branches(tree))
 
 def is_leaf(tree):
     """Returns True if the given tree's list of branches is empty, and False
@@ -93,12 +90,9 @@ def replace_leaf(t, old, new):
     True
     """
     "*** YOUR CODE HERE ***"
-    if is_leaf(t):
-        if label(t) == old:
-            return tree(new)
-        return t
-    else:
+    if not is_leaf(t):
         return tree(label(t), [replace_leaf(b, old, new) for b in branches(t)])
+    return tree(new) if label(t) == old else t
 
 def print_move(origin, destination):
     """Print instructions to move a disk."""
@@ -189,10 +183,6 @@ def sub_interval(x, y):
     upper = upper_bound(x) - lower_bound(y)
     return interval(lower, upper)
 
-# Official solution
-    negative_y = interval(-upper_bound(y), -lower_bound(y))
-    return add_interval(x, negative_y)
-
 def div_interval(x, y):
     """Return the interval that contains the quotient of any value in x divided by
     any value in y. Division is implemented as the multiplication of x by the
@@ -270,15 +260,6 @@ def quadratic(x, a, b, c):
         upper = max(edge_case1, edge_case2)
     return interval(lower, upper)
 
-# Official solution
-    extremum = -b / (2*a)
-    f = lambda x: a * x * x + b * x + c
-    l, u, e = map(f, (lower_bound(x), upper_bound(x), extremum))
-    if extremum >= lower_bound(x) and extremum <= upper_bound(x):
-        return interval(min(l, u, e), max(l, u, e))
-    else:
-        return interval(min(l, u), max(l, u))
-
 
 
 # My solution
@@ -298,10 +279,7 @@ def polynomial(x, c):
     "*** YOUR CODE HERE ***"
     def polynomial_root():
         def df(x, k=len(c)):  # The df of the polynomial
-            if k == 1:
-                return 0
-            else:
-                return (k - 1) * c[k - 1] * pow(x, k - 2) + df(x, k - 1)
+            return 0 if k == 1 else (k - 1) * c[k - 1] * pow(x, k - 2) + df(x, k - 1)
 
         def ddf(x, k=len(c)):  # The ddf of the polynomial
             if k == 1:
@@ -310,6 +288,7 @@ def polynomial(x, c):
                 return 0
             else:
                 return (k - 2) * (k - 1) * c[k - 1] * pow(x, k - 3) + ddf(x, k - 1)
+
         return find_zero(df, ddf)
 
     t = polynomial_root()
@@ -410,7 +389,7 @@ def improve(update, close, guess=1, max_updates=100):
     k = 0
     while not close(guess) and k < max_updates:
         guess = update(guess)
-        k = k + 1
+        k += 1
     return guess
 
 def approx_eq(x, y, tolerance=1e-15):

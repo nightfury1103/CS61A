@@ -38,7 +38,7 @@ class Player(object):
             print(destination_place.name, 'is locked! Go look for a key to unlock it')
         else:
             self.place = destination_place
-        print('You are at ' + str(self.place.name))
+        print(f'You are at {str(self.place.name)}')
 
 
     def talk_to(self, person):
@@ -229,7 +229,7 @@ class Place(object):
         self.exits = {} # {'name': (exit, 'description')}
 
     def look(self):
-        print('You are currently at ' + self.name + '. You take a look around and see:')
+        print(f'You are currently at {self.name}. You take a look around and see:')
         print('Characters:')
         if not self.characters:
             print('    no one in particular')
@@ -262,10 +262,9 @@ class Place(object):
             print('Exit has to be a string.')
             return self
         elif exit in self.exits:
-            exit_place = self.exits[exit][0]
-            return exit_place
+            return self.exits[exit][0]
         else:
-            print("Can't go to {} from {}.".format(exit, self.name))
+            print(f"Can't go to {exit} from {self.name}.")
             print("Try looking around to see where to go.")
             return self
 

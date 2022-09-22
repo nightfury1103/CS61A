@@ -46,33 +46,33 @@ class TextWidget(BetterWidget):
 class Text(tk.Text):
     """A Text is a text box."""
     def __init__(self, parent, **kwargs):
-        kwargs.update(text_theme)
+        kwargs |= text_theme
         tk.Text.__init__(self, parent, **kwargs)
 
 class Label(TextWidget, tk.Label):
     """A Label is a text label."""
     def __init__(self, parent, **kwargs):
-        kwargs.update(label_theme)
+        kwargs |= label_theme
         tk.Label.__init__(self, parent, **kwargs)
         TextWidget.__init__(self, **kwargs)
 
 class Button(BetterWidget, tk.Button):
     """A Button is an interactive button."""
     def __init__(self, *args, **kwargs):
-        kwargs.update(button_theme)
+        kwargs |= button_theme
         tk.Button.__init__(self, *args, **kwargs)
 
 class Entry(TextWidget, tk.Entry):
     """An Entry widget accepts text entry."""
     def __init__(self, parent, **kwargs):
-        kwargs.update(entry_theme)
+        kwargs |= entry_theme
         tk.Entry.__init__(self, parent, **kwargs)
         TextWidget.__init__(self, **kwargs)
 
 class Frame(BetterWidget, tk.Frame):
     """A Frame contains other widgets."""
     def __init__(self, *args, **kwargs):
-        kwargs.update(frame_theme)
+        kwargs |= frame_theme
         tk.Frame.__init__(self, *args, **kwargs)
 
 class IORedirector(object):
@@ -144,8 +144,7 @@ class HogGUI(Frame):
         self.s_labels = [None, None]
         for i in (0, 1):
             self.p_frames[i] = Frame(self.score_frame, padx=25).pack(side=LEFT)
-            self.p_labels[i] = Label(self.p_frames[i],
-                        text=name(i) + ':').pack()
+            self.p_labels[i] = Label(self.p_frames[i], text=f'{name(i)}:').pack()
             self.s_labels[i] = Label(self.p_frames[i]).pack()
 
     def init_rolls(self):
@@ -268,7 +267,7 @@ class HogGUI(Frame):
         s1 = opp_score if self.who == 0 else score
         self.s_labels[0].text = s0
         self.s_labels[1].text = s1
-        self.roll_label.text = name(self.who) +' will roll:'
+        self.roll_label.text = f'{name(self.who)} will roll:'
         status = self.status_label.text
         self.status_label.text = status
 
@@ -286,8 +285,7 @@ class HogGUI(Frame):
 
         self.clear_dice()
         self.dice_count = 0
-        self.status_label.text = '{} chose to roll {}.'.format(name(self.who),
-                                                               result)
+        self.status_label.text = f'{name(self.who)} chose to roll {result}.'
         self.switch()
         return result
 
@@ -318,8 +316,7 @@ class HogGUI(Frame):
             self.s_labels[0].text = score
             self.s_labels[1].text = opponent_score
             winner = 0 if score > opponent_score else 1
-            self.status_label.text = 'Game over! {} wins!'.format(
-                                        name(winner))
+            self.status_label.text = f'Game over! {name(winner)} wins!'
 
     def restart(self):
         """Kills the current game and begins another game."""

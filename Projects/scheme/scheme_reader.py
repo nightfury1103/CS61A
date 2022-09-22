@@ -42,14 +42,14 @@ class Pair:
         return 'Pair({0}, {1})'.format(repr(self.first), repr(self.second))
 
     def __str__(self):
-        s = '(' + str(self.first)
+        s = f'({str(self.first)}'
         second = self.second
         while isinstance(second, Pair):
-            s += ' ' + str(second.first)
+            s += f' {str(second.first)}'
             second = second.second
         if second is not nil:
-            s += ' . ' + str(second)
-        return s + ')'
+            s += f' . {str(second)}'
+        return f'{s})'
 
     def __len__(self):
         n, second = 1, self.second
@@ -61,9 +61,11 @@ class Pair:
         return n
 
     def __eq__(self, p):
-        if not isinstance(p, Pair):
-            return False
-        return self.first == p.first and self.second == p.second
+        return (
+            self.first == p.first and self.second == p.second
+            if isinstance(p, Pair)
+            else False
+        )
 
     def map(self, fn):
         """Return a Scheme list after mapping Python function FN to SELF."""
@@ -152,12 +154,11 @@ def read_tail(src):
             "*** YOUR CODE HERE ***"
             src.remove_front()  # Remove the dot
             val = scheme_read(src)  # Read one additional expression
-            if src.current() == ')':
-                src.remove_front()  # Remove the closing parenthesis
-                return val
-            else:
+            if src.current() != ')':
                 raise SyntaxError("more than one element follow a dot")
-            # END PROBLEM 2
+            src.remove_front()  # Remove the closing parenthesis
+            return val
+                    # END PROBLEM 2
         else:
             # BEGIN PROBLEM 1
             "*** YOUR CODE HERE ***"
@@ -176,10 +177,7 @@ def buffer_input(prompt='scm> '):
 
 def buffer_lines(lines, prompt='scm> ', show_prompt=False):
     """Return a Buffer instance iterating through LINES."""
-    if show_prompt:
-        input_lines = lines
-    else:
-        input_lines = LineReader(lines, prompt)
+    input_lines = lines if show_prompt else LineReader(lines, prompt)
     return Buffer(tokenize_lines(input_lines))
 
 def read_line(line):
@@ -199,7 +197,7 @@ def read_print_loop():
                 print('str :', expression)
                 print('repr:', repr(expression))
         except (SyntaxError, ValueError) as err:
-            print(type(err).__name__ + ':', err)
+            print(f'{type(err).__name__}:', err)
         except (KeyboardInterrupt, EOFError):  # <Control>-D, etc.
             print()
             return

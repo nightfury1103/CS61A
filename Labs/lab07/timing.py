@@ -8,14 +8,14 @@ def indexing_test(repetitions, size):
     """
     pyList, linkedList = setup_lists(size)
 
-    print("Randomly indexing into Python list {} times".format(repetitions), end=": ")
+    print(f"Randomly indexing into Python list {repetitions} times", end=": ")
     start = time()
     for _ in range(repetitions):
         pyList[randint(0, size - 1)]
     pyTime = time() - start
     print("took " +  format(pyTime, '.6f')  + 's')
 
-    print("Randomly indexing into linked list {} times".format(repetitions), end=": ")
+    print(f"Randomly indexing into linked list {repetitions} times", end=": ")
     start = time()
     for _ in range(repetitions):
         get_item(linkedList, randint(0, size - 1))
@@ -28,7 +28,11 @@ def insert_test(repetitions):
     """
     pyList, linkedList = [], Link.empty
 
-    print("Inserting {} items into the start of a Python list".format(repetitions), end=": ")
+    print(
+        f"Inserting {repetitions} items into the start of a Python list",
+        end=": ",
+    )
+
     start = time()
     for _ in range(repetitions):
         pyList.insert(0, 0)
@@ -36,7 +40,11 @@ def insert_test(repetitions):
     pyTime = end - start
     print("took " +  format(pyTime, '.6f')  + 's')
 
-    print("Inserting {} items into the head of a linked list".format(repetitions), end=": ")
+    print(
+        f"Inserting {repetitions} items into the head of a linked list",
+        end=": ",
+    )
+
     start = time()
     for _ in range(repetitions):
         linkedList = Link(0, linkedList)

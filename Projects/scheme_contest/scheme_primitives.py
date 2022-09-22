@@ -108,9 +108,7 @@ def scheme_listp(x):
 @primitive("length")
 def scheme_length(x):
     check_type(x, scheme_listp, 0, 'length')
-    if x is nil:
-        return 0
-    return len(x)
+    return 0 if x is nil else len(x)
 
 @primitive("cons")
 def scheme_cons(x, y):
@@ -136,7 +134,7 @@ def scheme_list(*vals):
 
 @primitive("append")
 def scheme_append(*vals):
-    if len(vals) == 0:
+    if not vals:
         return nil
     result = vals[-1]
     for i in range(len(vals)-2, -1, -1):
@@ -193,9 +191,7 @@ def scheme_add(*vals):
 @primitive("-")
 def scheme_sub(val0, *vals):
     _check_nums(val0, *vals) # fixes off-by-one error
-    if len(vals) == 0:
-        return -val0
-    return _arith(operator.sub, val0, vals)
+    return _arith(operator.sub, val0, vals) if vals else -val0
 
 @primitive("*")
 def scheme_mul(*vals):
@@ -205,9 +201,7 @@ def scheme_mul(*vals):
 def scheme_div(val0, *vals):
     _check_nums(val0, *vals) # fixes off-by-one error
     try:
-        if len(vals) == 0:
-            return 1 / val0
-        return _arith(operator.truediv, val0, vals)
+        return _arith(operator.truediv, val0, vals) if vals else 1 / val0
     except ZeroDivisionError as err:
         raise SchemeError(err)
 
@@ -315,11 +309,11 @@ def scheme_atomp(x):
 def scheme_display(val):
     if scheme_stringp(val):
         val = eval(val)
-    print(str(val), end="")
+    print(val, end="")
 
 @primitive("print")
 def scheme_print(val):
-    print(str(val))
+    print(val)
 
 @primitive("newline")
 def scheme_newline():
@@ -452,7 +446,7 @@ def tscheme_rgb(red, green, blue):
     colors = (red, green, blue)
     for x in colors:
         if x < 0 or x > 1:
-            raise SchemeError("Illegal color intensity in " + str(colors))
+            raise SchemeError(f"Illegal color intensity in {colors}")
     scaled = tuple(int(x*255) for x in colors)
     return '"#%02x%02x%02x"' % scaled
 
@@ -516,7 +510,7 @@ def tscheme_pixelsize(size):
     """Change pixel size to SIZE."""
     _check_nums(size)
     if size <= 0 or not isinstance(size, int):
-        raise SchemeError("Invalid pixel size: " + str(size))
+        raise SchemeError(f"Invalid pixel size: {str(size)}")
     tscheme_pixel.size = size
 
 @primitive("screen_width")

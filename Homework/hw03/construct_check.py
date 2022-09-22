@@ -122,7 +122,7 @@ class ExclusionChecker(NodeVisitor):
         if self._checking:
             self.generic_visit(node)
         elif node.name in self._checked_funcs:
-            self._checked_name = "Function " + node.name
+            self._checked_name = f"Function {node.name}"
             checking0 = self._checking
             self._checking = True
             super().generic_visit(node)
@@ -132,8 +132,8 @@ class ExclusionChecker(NodeVisitor):
     def _report(self, node, msg=None):
         node_name = _NAMES.get(type(node).__name__, type(node).__name__)
         if msg is None:
-            msg = "should not contain '{}'".format(node_name)
-        print("{} {}".format(self._checked_name, msg))
+            msg = f"should not contain '{node_name}'"
+        print(f"{self._checked_name} {msg}")
         self._errs += 1
 
     def errors(self):

@@ -127,7 +127,7 @@ class GUI:
             #No, so do that now
             self.initialize_colony_graphics(colony)
         elapsed = 0 #Physical time elapsed this turn
-        self.saveState("time", int(elapsed))
+        self.saveState("time", elapsed)
         while elapsed < STRATEGY_SECONDS:
             self.saveState("time", colony.time)
             self._update_control_panel(colony)
@@ -143,7 +143,7 @@ class GUI:
     def _init_places(self, colony):
         """Calculate all of our place data"""
         self.places = {};
-        self.images = { 'AntQueen': dict() }
+        self.images = {'AntQueen': {}}
         rows = 0
         cols = 0
         for name, place in colony.places.items():
@@ -153,15 +153,20 @@ class GUI:
             pRow = self.get_place_row(name)
             if place.exit.name == 'AntQueen':
                 rows += 1
-            if not pRow in self.places:
+            if pRow not in self.places:
                 self.places[pRow] = {}
-            self.places[pRow][pCol] = { "name": name, "type": "tunnel", "water": 0, "insects": {} } 
+            self.places[pRow][pCol] = { "name": name, "type": "tunnel", "water": 0, "insects": {} }
             if "water" in name:
                 self.places[pRow][pCol]["water"] = 1
-            self.images[name] = dict()
+            self.images[name] = {}
         #Add the Hive
-        self.places[colony.hive.name] = { "name": name, "type": "hive", "water": 0, "insects": {} }
-        self.places[colony.hive.name]["insects"] = []
+        self.places[colony.hive.name] = {
+            "name": name,
+            "type": "hive",
+            "water": 0,
+            "insects": [],
+        }
+
         for bee in colony.hive.bees:
             self.places[colony.hive.name]["insects"].append({"id": self.currentBeeId, "type": "bee"})
             self.beeToId[bee] = self.currentBeeId
@@ -247,10 +252,7 @@ class HttpHandler(http.server.SimpleHTTPRequestHandler):
     def cgiFieldStorageToDict(self, fieldStorage):
         """ Get a plain dictionary rather than the '.value' system used by the 
            cgi module's native fieldStorage class. """
-        params = {}
-        for key in fieldStorage.keys():
-            params[key] = fieldStorage[key].value
-        return params
+        return {key: fieldStorage[key].value for key in fieldStorage.keys()}
 
     def do_POST(self):
         path = self.path
@@ -290,10 +292,9 @@ def dead_insects(self, rv, *args):
 def removed_ant(self, rv, *args):
     r = gui.get_place_row(args[0])
     c = gui.get_place_column(args[0])
-    if c in gui.places[r]:
-        if "id" in gui.places[r][c]["insects"]:
-            gui.deadinsects.append(gui.places[r][c]["insects"]["id"])
-            gui.saveState("deadinsects", gui.deadinsects)
+    if c in gui.places[r] and "id" in gui.places[r][c]["insects"]:
+        gui.deadinsects.append(gui.places[r][c]["insects"]["id"])
+        gui.saveState("deadinsects", gui.deadinsects)
 
 def update():
     request = urllib.request.Request("https://api.github.com/repos/colinschoen/Ants-Web-Viewer/releases/latest")
@@ -319,12 +320,12 @@ def get_update(url, version):
     print("Downloading new version...")
     try:
         response = urllib.request.urlopen(request)
-        with open(version + ".zip", 'wb') as f:
+        with open(f"{version}.zip", 'wb') as f:
             f.write(response.read())
-        f = zipfile.ZipFile(version + ".zip")
+        f = zipfile.ZipFile(f"{version}.zip")
         f.extractall(version)
         #Delete original archive
-        os.remove(version + ".zip")
+        os.remove(f"{version}.zip")
         os.chdir(version)
         os.chdir(os.listdir()[0])
         files = os.listdir()
@@ -337,9 +338,9 @@ def get_update(url, version):
                 dirs.append(f)
                 continue
             #Copy the files up two directories
-            shutil.copy(f, "../../" + f)
+            shutil.copy(f, f"../../{f}")
         for d in dirs:
-            distutils.dir_util.copy_tree(d, "../../" + d)
+            distutils.dir_util.copy_tree(d, f"../../{d}")
         #Delete our temp directory
         os.chdir('../..')
         print("Cleaning up...")
@@ -372,14 +373,15 @@ def run(*args):
     #Basic HTTP Handler
     #Handler = http.server.SimpleHTTPRequestHandler
     httpd = CustomThreadingTCPServer(("", PORT), HttpHandler)
-    print("Web Server started @ localhost:" + str(PORT))
+    print(f"Web Server started @ localhost:{PORT}")
     def start_http():
         while gui.active:
             httpd.handle_request()
         print("Web server terminated")
+
     threading.Thread(target=start_http).start()
     try:
-        webbrowser.open("http://localhost:" + str(PORT) + '/gui.html', 2)
+        webbrowser.open(f"http://localhost:{PORT}/gui.html", 2)
     except Exception:
         print("Unable to automatically open web browser.")
-        print("Point your browser to http://localhost:" + str(PORT) + '/gui.html')
+        print(f"Point your browser to http://localhost:{PORT}/gui.html")

@@ -9,10 +9,7 @@ def list_to_link(lst):
     <1 2 3>
     """
     "*** YOUR CODE HERE ***"
-    if not lst:
-        return Link.empty
-    else:
-        return Link(lst[0], list_to_link(lst[1:]))
+    return Link(lst[0], list_to_link(lst[1:])) if lst else Link.empty
 
 # Q3
 def link_to_list(link):
@@ -74,9 +71,9 @@ class Link:
 
     def __repr__(self):
         if self.rest is Link.empty:
-            return 'Link({})'.format(self.first)
+            return f'Link({self.first})'
         else:
-            return 'Link({}, {})'.format(self.first, repr(self.rest))
+            return f'Link({self.first}, {repr(self.rest)})'
 
     def __str__(self):
         """Returns a human-readable string representation of the Link
@@ -91,7 +88,7 @@ class Link:
         """
         string = '<'
         while self.rest is not Link.empty:
-            string += str(self.first) + ' '
+            string += f'{str(self.first)} '
             self = self.rest
         return string + str(self.first) + '>'
 
@@ -116,10 +113,7 @@ class Link:
         >>> s[2]
         3
         """
-        if i == 0:
-            return self.first
-        else:
-            return self.rest[i-1]
+        return self.first if i == 0 else self.rest[i-1]
 
     def __setitem__(self, index, element):
         """Sets the value at the given index to the element
@@ -157,10 +151,7 @@ class Tree:
         self.branches = list(branches)
 
     def __repr__(self):
-        if self.branches:
-            branches_str = ', ' + repr(self.branches)
-        else:
-            branches_str = ''
+        branches_str = f', {repr(self.branches)}' if self.branches else ''
         return 'Tree({0}{1})'.format(self.label, branches_str)
 
     def is_leaf(self):

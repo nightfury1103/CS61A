@@ -19,10 +19,9 @@ def check_strategy_roll(score, opponent_score, num_rolls):
      ...
     AssertionError: strategy(0, 0) returned None (not an integer)
     """
-    msg = 'strategy({}, {}) returned {}'.format(
-        score, opponent_score, num_rolls)
-    assert type(num_rolls) == int, msg + ' (not an integer)'
-    assert 0 <= num_rolls <= 10, msg + ' (invalid number of rolls)'
+    msg = f'strategy({score}, {opponent_score}) returned {num_rolls}'
+    assert type(num_rolls) == int, f'{msg} (not an integer)'
+    assert 0 <= num_rolls <= 10, f'{msg} (invalid number of rolls)'
 
 
 def check_strategy(strategy, goal=GOAL_SCORE):

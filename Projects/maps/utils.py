@@ -83,8 +83,6 @@ def mean(s):
     # BEGIN Question 1
     "*** YOUR CODE HERE ***"
     assert s, "Sequences cannot be empty"
-    total = 0
-    for elem in s:
-        total += elem
+    total = sum(s)
     return total / len(s)
     # END Question 1

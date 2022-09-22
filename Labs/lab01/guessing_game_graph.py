@@ -36,7 +36,7 @@ def get_frequency(algorithm_name, runs=1000):
     algorithm = getattr(lab01_extra, algorithm_name)
 
     counts = defaultdict(int)
-    for i in range(runs):
+    for _ in range(runs):
         num_guesses = algorithm()
         counts[num_guesses] += 1
 

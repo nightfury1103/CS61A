@@ -35,16 +35,8 @@ def add_song(t, song, category):
 # Official solution1
     if label(t) == category and not is_leaf(t):
         return tree(label(t), branches(t) + [tree(song)])
-    kept_branches = []
-    for b in branches(t):
-        kept_branches += [add_song(b, song, category)]
+    kept_branches = [add_song(b, song, category) for b in branches(t)]
     return tree(label(t), kept_branches)
-
-# Official solution2
-    if label(t) == category and not is_leaf(t):
-        return tree(label(t), branches(t) + [tree(song)])
-    all_branches = [add_song(b, song, category) for b in branches(t)]
-    return tree(label(t), all_branches)
 
 def delete(t, target):
     """Returns the tree that results from deleting TARGET from t. If TARGET is
@@ -78,17 +70,6 @@ def delete(t, target):
             delete(b, target)
     return tree(label(t), delete_branches)
 
-# Official solution1
-    kept_branches = []
-    for b in branches(t):
-        if label(b) != target:
-            kept_branches += [delete(b, target)]
-    return tree(label(t), kept_branches)
-
-# Official solution2
-    kept_branches = [delete(b, target) for b in branches(t) if label(b) != target]
-    return tree(label(t), kept_branches)
-
 
 # Shakespeare and Dictionaries
 def build_successors_table(tokens):
@@ -121,7 +102,7 @@ def construct_sent(word, table):
     import random
     result = ' '
     while word not in ['.', '!', '?']:
-        result += word + ' '
+        result += f'{word} '
         word = random.choice(table[word])
     return result + word
 
@@ -131,9 +112,8 @@ def shakespeare_tokens(path='shakespeare.txt', url='http://composingprograms.com
     from urllib.request import urlopen
     if os.path.exists(path):
         return open('shakespeare.txt', encoding='ascii').read().split()
-    else:
-        shakespeare = urlopen(url)
-        return shakespeare.read().decode(encoding='ascii').split()
+    shakespeare = urlopen(url)
+    return shakespeare.read().decode(encoding='ascii').split()
 
 # Uncomment the following two lines
 tokens = shakespeare_tokens()

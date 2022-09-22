@@ -65,12 +65,10 @@ def is_prime(n):
     "*** YOUR CODE HERE ***"
     def calculate(i):
         if i < n:
-            if n ** 0.5 % i == 0:  # 'n ** 0.5' could be replaced by 'n'
-                return False
-            else:
-                return calculate(i + 1)
+            return False if n ** 0.5 % i == 0 else calculate(i + 1)
         else:
             return True
+
     return calculate(2)
 
 def interleaved_sum(n, odd_term, even_term):
@@ -91,14 +89,8 @@ def interleaved_sum(n, odd_term, even_term):
             return total + odd_term(i) + helper(i + 1)
         else:
             return total
-    return helper(1)
 
-# Official solution
-    def helper(term0, term1, k):
-        if k == n:
-            return term0(k)
-        return term0(k) + helper(term1, term0, k + 1)
-    return helper(odd_term, even_term, 1)
+    return helper(1)
 
 def ten_pairs(n):
     """Return the number of ten-pairs within positive integer n.
@@ -113,10 +105,7 @@ def ten_pairs(n):
     "*** YOUR CODE HERE ***"
 # Could not figure it our until I saw the official solution
 # "Do not use assignment statements" makes this question more difficult
-    if n < 10:
-        return 0
-    else:
-        return ten_pairs(n // 10) + count_digit(n // 10, 10 - n % 10)
+    return 0 if n < 10 else ten_pairs(n // 10) + count_digit(n // 10, 10 - n % 10)
 
 def count_digit(n, digit):
     if n == 0:

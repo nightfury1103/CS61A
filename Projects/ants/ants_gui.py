@@ -87,7 +87,7 @@ class AntsGUI:
         self.canvas = graphics.Canvas()
         self.food_text = self.canvas.draw_text('Food: 1  Time: 0', (20, 20))
         self.ant_text = self.canvas.draw_text('Ant selected: None', (20, 140))
-        self._click_rectangles = list()
+        self._click_rectangles = []
         self._init_control_panel(colony)
         self._init_places(colony)
 
@@ -119,9 +119,9 @@ class AntsGUI:
 
     def _init_places(self, colony):
         """Construct places in the play area."""
-        self.place_points = dict()
+        self.place_points = {}
         # self.images: place_name -> insect instance -> image id
-        self.images = {'AntQueen': dict()}
+        self.images = {'AntQueen': {}}
         place_pos = PLACE_POS
         width = BEE_IMAGE_WIDTH + 2 * PLACE_PADDING[0]
         height = ANT_IMAGE_HEIGHT + 2 * PLACE_PADDING[1]
@@ -149,16 +149,17 @@ class AntsGUI:
                         self._update_places(colony)
                     except Exception as e:
                         print(e)
+
             color = 'Blue' if place.name.startswith('water') else 'White'
             frame = self.add_click_rect(place_pos, width, height, on_click,
                                              color=color)
             self.canvas.draw_image(place_pos, TUNNEL_FILE)
             self.place_points[name] = place_pos
-            self.images[name] = dict()
+            self.images[name] = {}
             place_pos = shift_point(place_pos, (width + PLACE_MARGIN, 0))
 
         # Hive
-        self.images[colony.hive.name] = dict()
+        self.images[colony.hive.name] = {}
         self.place_points[colony.hive.name] = (place_pos[0] + width,
                                                HIVE_HEIGHT)
         self.laser_end = (BEE_IMAGE_WIDTH + 2 * PLACE_PADDING[0]) * len(colony.places)
@@ -267,8 +268,7 @@ class AntsGUI:
 
     def _throw(self, ant, colony):
         """Animate a leaf thrown at a Bee."""
-        bee = ant.nearest_bee(colony.hive)  # nearest_bee logic from ants.py
-        if bee:
+        if bee := ant.nearest_bee(colony.hive):
             start = shift_point(self.place_points[ant.place.name], LEAF_START_OFFSET)
             end = shift_point(self.place_points[bee.place.name], LEAF_END_OFFSET)
             animate_leaf(self.canvas, start, end, color=LEAF_COLORS[ant.name])
@@ -289,13 +289,14 @@ def animate_leaf(canvas, start, end, duration=0.3, color='ForestGreen'):
     leaf = canvas.draw_polygon(leaf_coords(start, 0, length),
             color='DarkGreen', fill_color=color, smooth=1)
     num_frames = duration / graphics.FRAME_TIME
-    increment = tuple([(e-s) / num_frames for s, e in zip(start, end)])
+    increment = tuple((e-s) / num_frames for s, e in zip(start, end))
     def points_fn(frame_count):
         nonlocal start
         angle = pi / 8 * frame_count
         cs = leaf_coords(start, angle, length)
         start = shift_point(start, increment)
         return cs
+
     canvas.animate_shape(leaf, duration, points_fn)
     canvas._canvas.after(int(1000*duration) + 1, lambda: canvas.clear(leaf))
 

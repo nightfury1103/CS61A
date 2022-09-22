@@ -9,10 +9,7 @@ def ab_plus_c(a, b, c):
     2
     """
     "*** YOUR CODE HERE ***"
-    if a == 0 or b == 0:
-        return c
-    else:
-        return ab_plus_c(a - 1, b, c) + b
+    return c if a == 0 or b == 0 else ab_plus_c(a - 1, b, c) + b
 
 def gcd(a, b):
     """Returns the greatest common divisor of a and b.

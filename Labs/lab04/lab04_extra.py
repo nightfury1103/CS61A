@@ -17,19 +17,8 @@ def flatten(lst):
 # My solution
     flatten_lst = []
     for item in lst:
-        if not type(item) == list:
-            flatten_lst += [item]
-        else:
-            flatten_lst += flatten(item)
+        flatten_lst += [item] if type(item) != list else flatten(item)
     return flatten_lst
-
-# Official solution (more like a recursive function)
-    if not lst:
-        return []
-    elif type(lst[0]) == list:
-        return flatten(lst[0]) + flatten(lst[1:])
-    else:
-        return [lst[0]] + flatten(lst[1:])
 
 # Q14
 def merge(lst1, lst2):
@@ -73,7 +62,4 @@ def merge_iter(lst1, lst2):
         else:
             new += [lst2[0]]
             lst2 = lst2[1:]
-    if lst1:
-        return new + lst1
-    else:
-        return new + lst2
+    return new + lst1 if lst1 else new + lst2

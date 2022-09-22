@@ -1,12 +1,13 @@
 """The graphics module implements a simple GUI library."""
 
+
 import sys
 import math
 
 try:
     import tkinter
 except Exception as e:
-    print('Could not load tkinter: ' + str(e))
+    print(f'Could not load tkinter: {str(e)}')
 
 FRAME_TIME = 1/30
 
@@ -39,13 +40,13 @@ class Canvas(object):
         self._tk.title(title or 'Graphics Window')
         self._tk.bind('<Button-1>', self._click)
         self._click_pos = None
-        
+
         # Canvas object
         self._canvas = tkinter.Canvas(self._tk, width=width, height=height)
         self._canvas.pack()
         self._draw_background()
         self._canvas.update()
-        self._images = dict()
+        self._images = {}
 
     def clear(self, shape='all'):
         """Clear all shapes, text, and images."""
@@ -59,7 +60,7 @@ class Canvas(object):
 
         points -- a list of (x, y) pairs encoding pixel positions
         """
-        if fill_color == None: 
+        if fill_color is None: 
             fill_color = color
         if filled == 0: 
             fill_color = ""
@@ -71,7 +72,7 @@ class Canvas(object):
 
         center -- an (x, y) pair encoding a pixel position
         """
-        if fill_color == None: 
+        if fill_color is None: 
             fill_color = color
         if filled == 0: 
             fill_color = ""
@@ -180,7 +181,7 @@ class Canvas(object):
 
 def flattened(points):
     """Return a flat list of coordinates from a list of pairs."""
-    coords = list()
+    coords = []
     [coords.extend(p) for p in points]
     return tuple(coords)
 

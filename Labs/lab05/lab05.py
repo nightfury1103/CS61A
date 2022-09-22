@@ -30,10 +30,7 @@ def reduce(combiner, seq):
     4
     """
     "*** YOUR CODE HERE ***"
-    if len(seq) == 1:
-        return seq[0]
-    else:
-        return combiner(seq[0], reduce(combiner, seq[1:]))
+    return seq[0] if len(seq) == 1 else combiner(seq[0], reduce(combiner, seq[1:]))
 
 
 # pyTunes
@@ -75,10 +72,7 @@ def num_songs(t):
     1
     """
     "*** YOUR CODE HERE ***"
-    if is_leaf(t):
-        return 1
-    else:
-        return sum([num_songs(b) for b in branches(t)])
+    return 1 if is_leaf(t) else sum(num_songs(b) for b in branches(t))
 
 # Tree ADT
 # Tree definition
@@ -101,10 +95,7 @@ def is_tree(tree):
     """Returns True if the given tree is a tree, and False otherwise."""
     if type(tree) != list or len(tree) < 1:
         return False
-    for branch in branches(tree):
-        if not is_tree(branch):
-            return False
-    return True
+    return all(is_tree(branch) for branch in branches(tree))
 
 def is_leaf(tree):
     """Returns True if the given tree's list of branches is empty, and False

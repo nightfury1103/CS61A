@@ -46,13 +46,9 @@ def repeated(t, k):
     first = next(t_iter)
     while k > 1:
         second = next(t_iter)
-        if first == second:
-            k = k - 1
-        else:
-            k = k_copy
+        k = k - 1 if first == second else k_copy
         first = second  # Put 'second = next(t_iter)' there may cause an Error, like StopIteraton, or ValueError from trap
-    else:
-        return first
+    return first
 
 # Q8
 def merge(s0, s1):
@@ -76,21 +72,15 @@ def merge(s0, s1):
     e0, e1 = next(i0, None), next(i1, None)
     "*** YOUR CODE HERE ***"
     while (e0 is not None) or (e1 is not None):
-        if e0 is None:
+        if e0 is None or e1 is not None and e0 != e1 and e0 >= e1 and e0 > e1:
             yield e1
             e1 = next(i1, None)
-        elif e1 is None:
+        elif e1 is None or e0 != e1 and e0 < e1:
             yield e0
             e0 = next(i0, None)
         elif e0 == e1:
             yield e0
             e0, e1 = next(i0, None), next(i1, None)
-        elif e0 < e1:
-            yield e0
-            e0 = next(i0, None)
-        elif e0 > e1:
-            yield e1
-            e1 = next(i1, None)
 
 
 # Q9
@@ -140,6 +130,6 @@ def zip_generator(*iterables):
     """
     "*** YOUR CODE HERE ***"
     iterator = iter(zip(*iterables))
-    for _ in range(len(list(zip(*iterables)))):
+    for _ in list(zip(*iterables)):
         yield list(next(iterator))
 

@@ -50,9 +50,6 @@ def squares(s):
             square_roots = square_roots + [int(sqrt(integer))]
     return square_roots
 
-# Official solution
-    return [round(n ** 0.5) for n in s if round(n ** 0.5) ** 2 == n]
-
 def g(n):
     """Return the value of G(n), computed recursively.
 
@@ -71,10 +68,7 @@ def g(n):
     True
     """
     "*** YOUR CODE HERE ***"
-    if n <= 3:
-        return n
-    else:
-        return g(n - 1) + 2 * g(n - 2) + 3 * g(n - 3)
+    return n if n <= 3 else g(n - 1) + 2 * g(n - 2) + 3 * g(n - 3)
 
 def g_iter(n):
     """Return the value of G(n), computed iteratively.
@@ -94,14 +88,13 @@ def g_iter(n):
     True
     """
     "*** YOUR CODE HERE ***"
-    i = 3
     num_1, num_2, num_3 = 1, 2, 3
     if n <= 3:
         return n
-    else:
-        while i < n:
-            num_1, num_2, num_3 = num_2, num_3, num_3 + 2 * num_2 + 3 * num_1
-            i += 1
+    i = 3
+    while i < n:
+        num_1, num_2, num_3 = num_2, num_3, num_3 + 2 * num_2 + 3 * num_1
+        i += 1
     return num_3
 
 
@@ -139,12 +132,9 @@ def pingpong(n):
     """
     "*** YOUR CODE HERE ***"
 # My solution
-    def contain(x):  # Equals to func have_seven
+    def contain(x):    # Equals to func have_seven
         """if number x contains digit 7, return True, else return False"""
-        if x < 10:
-            return x == 7
-        else:
-            return contain(x // 10) or contain(x % 10)
+        return x == 7 if x < 10 else contain(x // 10) or contain(x % 10)
 
     def count(x=1, element=1, switch=0):
         """return the xth element of the ping-pong sequence
@@ -161,24 +151,8 @@ def pingpong(n):
                 return count(x + 1, element + 1, switch + 1)
             else:
                 return count(x + 1, element - 1, switch)
+
     return count()
-
-# Official solution
-    def pingpong_next(k, p, up):
-        if k == n:
-            return p
-        if up:
-            return pingpong_switch(k + 1, p + 1, up)
-        else:
-            return pingpong_switch(k + 1, p - 1, up)
-
-    def pingpong_switch(k, p, up):
-        if k % 7 == 0 or has_seven(k):
-            return pingpong_next(k, p, not up)
-        else:
-            return pingpong_next(k, p, up)
-
-    return pingpong_next(1, 1, True)
 
 
 
@@ -243,16 +217,11 @@ def count_change(amount):
 
     return partitions(amount, find_largest_pow_2(amount))
 
-# Official solution (which is apparently better)
-    return count_using(1, amount)
-
 def count_using(min_coin, amount):
-    if amount < 0:
+    if amount < 0 or amount != 0 and min_coin > amount:
         return 0
     elif amount == 0:
         return 1
-    elif min_coin > amount:
-        return 0
     else:
         with_min = count_using(min_coin, amount - min_coin)
         without_min = count_using(2*min_coin, amount)

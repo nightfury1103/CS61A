@@ -74,8 +74,7 @@ def trap(s, k):
     while k > 0:
         yield next(s_iter)
         k = k - 1
-    else:
-        raise ValueError("more than {} values are requested".format(k_copy))
+    raise ValueError(f"more than {k_copy} values are requested")
 
 # the naturals generator is used for testing scale and merge functions
 def naturals():

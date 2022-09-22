@@ -13,13 +13,13 @@ class Car(object):
 
     def paint(self, color):
         self.color = color
-        return self.make + ' ' + self.model + ' is now ' + color
+        return f'{self.make} {self.model} is now {color}'
 
     def drive(self):
         if self.wheels < Car.num_wheels or self.gas <= 0:
-            return self.make + ' ' + self.model + ' cannot drive!'
+            return f'{self.make} {self.model} cannot drive!'
         self.gas -= 10
-        return self.make + ' ' + self.model + ' goes vroom!'
+        return f'{self.make} {self.model} goes vroom!'
 
     def pop_tire(self):
         if self.wheels > 0:

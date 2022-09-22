@@ -49,12 +49,10 @@ class GameTurn(object):
             return False
         # In case students call both strategies regardless of whose turn it is
         if self.score0 == other.score0 and self.score1 == other.score1 or \
-                not self.is_over():
+                    not self.is_over():
             return False
         # In case students call a strategy after the game should be over
-        if max(other.score0, other.score1) >= 100:
-            return False
-        return True
+        return max(other.score0, other.score1) < 100
 
     def set_successor(self, other):
         """Sets another GameTurn as the successor of this GameTurn."""
@@ -187,7 +185,7 @@ def make_solution_traces(hog):
     trace."""
     random.seed(TEST_SEED)
     sol_traces = []
-    for i in range(NUM_TESTS):
+    for _ in range(NUM_TESTS):
         strat0, strat1 = make_random_strat(), make_random_strat()
         trace = play_traced(hog, strat0, strat1)
         sol_traces.append([hash(state) for state in trace])
@@ -204,9 +202,7 @@ def compare_trace(trace, sol):
         if not state.is_correct(sol_state):
             return i
         i += 1
-    if len(trace) != len(sol):
-        return len(trace)
-    return -1
+    return len(trace) if len(trace) != len(sol) else -1
 
 
 def print_trace(trace, incorrect=None):

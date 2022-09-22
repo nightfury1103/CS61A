@@ -7,9 +7,7 @@ class State:
 
 
     def getState(self, key=None):
-        if key:
-            return self.gs[key]
-        return self.gs
+        return self.gs[key] if key else self.gs
 
     def updateState(self, key, val):
         self.gs[key] = val

@@ -16,9 +16,9 @@ class Link:
 
     def __repr__(self):
         if self.rest is Link.empty:
-            return 'Link({})'.format(self.first)
+            return f'Link({self.first})'
         else:
-            return 'Link({}, {})'.format(self.first, repr(self.rest))
+            return f'Link({self.first}, {repr(self.rest)})'
 
     def __str__(self):
         """Returns a human-readable string representation of the Link
@@ -33,7 +33,7 @@ class Link:
         """
         string = '<'
         while self.rest is not Link.empty:
-            string += str(self.first) + ' '
+            string += f'{str(self.first)} '
             self = self.rest
         return string + str(self.first) + '>'
 
@@ -80,10 +80,7 @@ class Fib():
     def next(self):
         "*** YOUR CODE HERE ***"
 # Official solution
-        if self.value == 0:
-            result = Fib(1)
-        else:
-            result = Fib(self.value + self.previous)
+        result = Fib(1) if self.value == 0 else Fib(self.value + self.previous)
         result.previous = self.value
         return result
 
@@ -211,6 +208,8 @@ class MissManners:
 
 # Official solution
         attr = message[len(magic_word):]
-        if not hasattr(self.obj, attr):
-            return 'Thanks for asking, but I know not how to ' + attr + '.'
-        return getattr(self.obj, attr)(*args)
+        return (
+            getattr(self.obj, attr)(*args)
+            if hasattr(self.obj, attr)
+            else f'Thanks for asking, but I know not how to {attr}.'
+        )

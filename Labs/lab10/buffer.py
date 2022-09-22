@@ -34,15 +34,12 @@ class Buffer:
 
     def current(self):
         """Return the current element, or None if none exists."""
-        if self.index >= len(self.source):
-            return None
-        else:
-            return self.source[self.index]
+        return None if self.index >= len(self.source) else self.source[self.index]
 
     def expect(self, expected):
         actual = self.remove_front()
         if expected != actual:
-            raise SyntaxError("expected '{}' but got '{}'".format(expected, actual))
+            raise SyntaxError(f"expected '{expected}' but got '{actual}'")
         else:
             return actual
 

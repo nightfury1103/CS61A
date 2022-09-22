@@ -84,9 +84,11 @@ class Buffer:
         msg = '{0:>' + str(math.floor(math.log10(n))+1) + "}: "
 
         # Up to three previous lines and current line are included in output
-        s = ''
-        for i in range(max(0, n-4), n-1):
-            s += msg.format(i+1) + ' '.join(map(str, self.lines[i])) + '\n'
+        s = ''.join(
+            msg.format(i + 1) + ' '.join(map(str, self.lines[i])) + '\n'
+            for i in range(max(0, n - 4), n - 1)
+        )
+
         s += msg.format(n)
         s += ' '.join(map(str, self.current_line[:self.index]))
         s += ' >> '

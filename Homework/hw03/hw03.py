@@ -21,10 +21,7 @@ def has_seven(k):
     True
     """
     "*** YOUR CODE HERE ***"
-    if k < 10:
-        return k == 7
-    else:
-        return has_seven(k // 10) or has_seven(k % 10)
+    return k == 7 if k < 10 else has_seven(k // 10) or has_seven(k % 10)
 
 def summation(n, term):
 
@@ -45,10 +42,7 @@ def summation(n, term):
     """
     assert n >= 1
     "*** YOUR CODE HERE ***"
-    if n == 1:
-        return term(n)
-    else:
-        return term(n) + summation(n-1, term)
+    return term(n) if n == 1 else term(n) + summation(n-1, term)
 
 from operator import add, mul
 
@@ -142,10 +136,8 @@ def filtered_accumulate(combiner, base, pred, n, term):
     """
     def combine_if(x, y):
         "*** YOUR CODE HERE ***"
-        if pred(x):  # The prerequisite of this statement is the fixed order (x, y) in combiner(x, y)
-            return combiner(x, y)
-        else:
-            return y
+        return combiner(x, y) if pred(x) else y
+
     return accumulate(combine_if, base, n, term)
 
 def odd(x):
@@ -171,15 +163,6 @@ def make_repeater(f, n):
     """
     "*** YOUR CODE HERE ***"
     return accumulate(compose1, lambda x: x, n, lambda x: f)
-
-# Alternatives
-
-    def calculator(x):
-        if n == 0:
-            return x
-        else:
-            return f(make_repeater(f, n - 1)(x))
-    return calculator
 
 
 

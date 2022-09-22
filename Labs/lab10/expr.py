@@ -63,7 +63,7 @@ class Expr:
         raise NotImplementedError
 
     def __repr__(self):
-        args = '(' + comma_separated([repr(arg) for arg in self.args]) + ')'
+        args = f'({comma_separated([repr(arg) for arg in self.args])})'
         return type(self).__name__ + args
 
 class Literal(Expr):
@@ -142,10 +142,11 @@ class LambdaExpr(Expr):
 
     def __str__(self):
         body = str(self.body)
-        if not self.parameters:
-            return 'lambda: ' + body
-        else:
-            return 'lambda ' + comma_separated(self.parameters) + ': ' + body
+        return (
+            f'lambda {comma_separated(self.parameters)}: {body}'
+            if self.parameters
+            else f'lambda: {body}'
+        )
 
 class CallExpr(Expr):
     """A call expression represents a function call.
@@ -187,9 +188,9 @@ class CallExpr(Expr):
 
     def __str__(self):
         function = str(self.operator)
-        args = '(' + comma_separated(self.operands) + ')'
+        args = f'({comma_separated(self.operands)})'
         if isinstance(self.operator, LambdaExpr):
-            return '(' + function + ')' + args
+            return f'({function}){args}'
         else:
             return function + args
 
@@ -231,7 +232,7 @@ class Value:
         raise NotImplementedError
 
     def __repr__(self):
-        args = '(' + comma_separated([repr(arg) for arg in self.args]) + ')'
+        args = f'({comma_separated([repr(arg) for arg in self.args])})'
         return type(self).__name__ + args
 
 class Number(Value):
@@ -245,8 +246,9 @@ class Number(Value):
         self.value = value
 
     def apply(self, arguments):
-        raise TypeError("Cannot apply number {} to arguments {}".format(
-            self.value, comma_separated(arguments)))
+        raise TypeError(
+            f"Cannot apply number {self.value} to arguments {comma_separated(arguments)}"
+        )
 
     def __str__(self):
         return str(self.value)
@@ -286,16 +288,18 @@ class LambdaFunction(Value):
         Number(4)
         """
         if len(self.parameters) != len(arguments):
-            raise TypeError("Cannot match parameters {} to arguments {}".format(
-                comma_separated(self.parameters), comma_separated(arguments)))
+            raise TypeError(
+                f"Cannot match parameters {comma_separated(self.parameters)} to arguments {comma_separated(arguments)}"
+            )
+
         "*** YOUR CODE HERE ***"
         new_env = self.parent.copy()
-        new_env.update({parameter: argument for parameter, argument in zip(self.parameters, arguments)})
+        new_env.update(dict(zip(self.parameters, arguments)))
         return self.body.eval(new_env)
 
     def __str__(self):
         definition = LambdaExpr(self.parameters, self.body)
-        return '<function {}>'.format(definition)
+        return f'<function {definition}>'
 
 class PrimitiveFunction(Value):
     """A built-in function. For a full list of built-in functions, see
@@ -311,12 +315,11 @@ class PrimitiveFunction(Value):
     def apply(self, arguments):
         for arg in arguments:
             if type(arg) != Number:
-                raise TypeError("Invalid arguments {} to {}".format(
-                    comma_separated(arguments), self))
+                raise TypeError(f"Invalid arguments {comma_separated(arguments)} to {self}")
         return Number(self.operator(*[arg.value for arg in arguments]))
 
     def __str__(self):
-        return '<primitive function {}>'.format(self.operator.__name__)
+        return f'<primitive function {self.operator.__name__}>'
 
 # The environment that the REPL evaluates expressions in.
 global_env = {

@@ -90,10 +90,7 @@ def closer_city(lat, lon, city1, city2):
     temporary_city = make_city("temporary city", lat, lon)
     distance1 = distance(temporary_city, city1)
     distance2 = distance(temporary_city, city2)
-    if distance1 > distance2:
-        return get_name(city2)
-    else:
-        return get_name(city1)
+    return get_name(city2) if distance1 > distance2 else get_name(city1)
 
 # Connect N: Q6-11
 ######################
@@ -108,7 +105,7 @@ def create_row(size):
     ['-', '-', '-', '-', '-']
     """
     "*** YOUR CODE HERE ***"
-    return ['-' for i in range(size)]
+    return ['-' for _ in range(size)]
 
 
 def create_board(rows, columns):
@@ -118,7 +115,7 @@ def create_board(rows, columns):
     [['-', '-', '-', '-', '-'], ['-', '-', '-', '-', '-'], ['-', '-', '-', '-', '-']]
     """
     "*** YOUR CODE HERE ***"
-    return [create_row(columns) for row in range(rows)]
+    return [create_row(columns) for _ in range(rows)]
 
 
 def replace_elem(lst, index, elem):
@@ -399,9 +396,7 @@ import sys
 def other(player):
     """ Returns the given player's opponent.
     """
-    if player == 'X':
-        return 'O'
-    return 'X'
+    return 'O' if player == 'X' else 'X'
 
 def play(board, max_rows, max_cols, num_connect):
     max_turns = max_rows * max_cols
@@ -418,7 +413,7 @@ def play(board, max_rows, max_cols, num_connect):
 
         while True:
             try:
-                col_index = int(input('Which column, player {}? '.format(who)))
+                col_index = int(input(f'Which column, player {who}? '))
             except ValueError as e:
                 print('Invalid input. Please try again.')
                 continue
@@ -433,7 +428,7 @@ def play(board, max_rows, max_cols, num_connect):
         print_board(board, max_rows, max_cols)
 
         if check_win(board, max_rows, max_cols, num_connect, row_index, col_index, who):
-            print("Player {} wins!".format(who))
+            print(f"Player {who} wins!")
             sys.exit()
 
         who = other(who)

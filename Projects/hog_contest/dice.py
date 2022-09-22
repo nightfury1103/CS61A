@@ -43,7 +43,7 @@ def make_test_dice(*outcomes):
     This function uses Python syntax/techniques not yet covered in this course.
     The best way to understand it is by reading the documentation and examples.
     """
-    assert len(outcomes) > 0, 'You must supply outcomes to make_test_dice'
+    assert outcomes, 'You must supply outcomes to make_test_dice'
     for o in outcomes:
         assert type(o) == int and o >= 1, 'Outcome is not a positive integer'
     index = len(outcomes) - 1
@@ -51,4 +51,5 @@ def make_test_dice(*outcomes):
         nonlocal index
         index = (index + 1) % len(outcomes)
         return outcomes[index]
+
     return dice

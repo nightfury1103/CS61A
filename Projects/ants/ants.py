@@ -41,17 +41,13 @@ class Place(object):
         if insect.is_ant:
             if self.ant is None:
                 self.ant = insect
+            elif self.ant.can_contain(insect):
+                self.ant.ant = insect
+            elif insect.can_contain(self.ant):
+                insect.ant = self.ant
+                self.ant = insect
             else:
-                # Phase 6: Special handling for BodyguardAnt
-                # BEGIN Problem 11
-                if self.ant.can_contain(insect):
-                    self.ant.ant = insect
-                elif insect.can_contain(self.ant):
-                    insect.ant = self.ant
-                    self.ant = insect
-                else:
-                    assert self.ant is None, 'Two ants in {0}'.format(self)
-                # END Problem 11
+                assert self.ant is None, 'Two ants in {0}'.format(self)
         else:
             self.bees.append(insect)
         insect.place = self
@@ -71,15 +67,16 @@ class Place(object):
             if isinstance(insect, QueenAnt) and not insect.imposter:
                 return
             elif self.ant is insect:
-                if hasattr(self.ant, 'container') and self.ant.container:
-                    self.ant = self.ant.ant
-                else:
-                    self.ant = None
+                self.ant = (
+                    self.ant.ant
+                    if hasattr(self.ant, 'container') and self.ant.container
+                    else None
+                )
+
+            elif hasattr(self.ant, 'container') and self.ant.container and self.ant.ant is insect:
+                self.ant.ant = None
             else:
-                if hasattr(self.ant, 'container') and self.ant.container and self.ant.ant is insect:
-                    self.ant.ant = None
-                else:
-                    assert False, '{0} is not in {1}'.format(insect, self)
+                assert False, '{0} is not in {1}'.format(insect, self)
         else:
             self.bees.remove(insect)
 
@@ -145,10 +142,7 @@ class Bee(Insect):
         """Return True if this Bee cannot advance to the next Place."""
         # Phase 4: Special handling for NinjaAnt
         # BEGIN Problem 8
-        if not self.place.ant or self.place.ant and not self.place.ant.blocks_path:
-            return False
-        else:  # Forget to return True at first, which makes the program cannot work
-            return True
+        return bool(self.place.ant and self.place.ant.blocks_path)
         # END Problem 8
 
     def action(self, colony):
@@ -287,10 +281,10 @@ class FireAnt(Ant):
         """
         # BEGIN Problem 4
         "*** YOUR CODE HERE ***"
-        bees_copy = list(self.place.bees)
         self.armor = self.armor - amount
         if self.armor <= 0:
             self.place.remove_insect(self)
+            bees_copy = list(self.place.bees)
             for bee in bees_copy:
                 bee.reduce_armor(self.damage)
         # END Problem 4
@@ -562,9 +556,8 @@ def apply_effect(effect, bee, duration):
         nonlocal duration
         if duration == 0:
             return origin_action(colony)
-        else:
-            duration -= 1
-            return new_action(colony)
+        duration -= 1
+        return new_action(colony)
 
     bee.action = action
     # END Problem EC
@@ -615,7 +608,7 @@ class Hornet(Bee):
     damage = 0.25
 
     def action(self, colony):
-        for i in range(2):
+        for _ in range(2):
             if self.armor > 0:
                 super().action(colony)
 
@@ -747,7 +740,7 @@ class AntColony(object):
         """
         constructor = self.ant_types[ant_type_name]
         if self.food < constructor.food_cost:
-            print('Not enough food remains to place ' + ant_type_name)
+            print(f'Not enough food remains to place {ant_type_name}')
         else:
             ant = constructor()
             self.places[place_name].add_insect(ant)
@@ -825,7 +818,7 @@ def interactive_strategy(colony):
     For example, one might deploy a ThrowerAnt to the first tunnel by invoking
     colony.deploy_ant('tunnel_0_0', 'Thrower')
     """
-    print('colony: ' + str(colony))
+    print(f'colony: {str(colony)}')
     msg = '<Control>-D (<Control>-Z <Enter> on Windows) completes a turn.\n'
     interact(msg)
 
@@ -842,13 +835,11 @@ def start_with_strategy(args, strategy):
     args = parser.parse_args()
 
     assault_plan = make_normal_assault_plan()
-    layout = dry_layout
     tunnel_length = 9
     num_tunnels = 3
     food = args.food
 
-    if args.water:
-        layout = wet_layout
+    layout = wet_layout if args.water else dry_layout
     if args.d in ['t', 'test']:
         assault_plan = make_test_assault_plan()
         num_tunnels = 1

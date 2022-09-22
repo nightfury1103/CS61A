@@ -8,7 +8,7 @@ from ucb import main, trace
 # Eval/Apply #
 ##############
 
-def scheme_eval(expr, env, _=None): # Optional third argument is ignored
+def scheme_eval(expr, env, _=None):    # Optional third argument is ignored
     """Evaluate Scheme expression EXPR in environment ENV.
 
     >>> expr = read_line('(+ 2 2)')
@@ -29,12 +29,11 @@ def scheme_eval(expr, env, _=None): # Optional third argument is ignored
     first, rest = expr.first, expr.second
     if scheme_symbolp(first) and first in SPECIAL_FORMS:
         return SPECIAL_FORMS[first](rest, env)
-    else:
-        # BEGIN PROBLEM 5
-        "*** YOUR CODE HERE ***"
-        operator = scheme_eval(first, env)  # Get the operator
-        check_procedure(operator)  # Check the operator
-        return operator.eval_call(rest, env)
+    # BEGIN PROBLEM 5
+    "*** YOUR CODE HERE ***"
+    operator = scheme_eval(first, env)  # Get the operator
+    check_procedure(operator)  # Check the operator
+    return operator.eval_call(rest, env)
         # END PROBLEM 5
 
 def self_evaluating(expr):
@@ -345,11 +344,8 @@ def do_cond_form(expressions, env):
         if scheme_truep(test):
             # BEGIN PROBLEM 14
             "*** YOUR CODE HERE ***"
-            if clause.second is nil:  # When the true predicate does not have a corresponding result sub-expression, return the predicate value
-                return test
-            else:  # When a result sub-expression of a cond case has multiple expressions, evaluate them all and return the value of the last expression
-                return eval_all(clause.second, env)
-            # END PROBLEM 14
+            return test if clause.second is nil else eval_all(clause.second, env)
+                    # END PROBLEM 14
         expressions = expressions.second
 
 def do_let_form(expressions, env):
@@ -419,7 +415,7 @@ def check_form(expr, min, max=float('inf')):
     >>> check_form(read_line('(a b)'), 2)
     """
     if not scheme_listp(expr):
-        raise SchemeError('badly formed expression: ' + str(expr))
+        raise SchemeError(f'badly formed expression: {str(expr)}')
     length = len(expr)
     if length < min:
         raise SchemeError('too few operands in form')
@@ -548,10 +544,7 @@ class Thunk:
 def complete_eval(val):
     """If VAL is an Thunk, returns the result of evaluating its expression
     part. Otherwise, simply returns VAL."""
-    if isinstance(val, Thunk):
-        return scheme_eval(val.expr, val.env)
-    else:
-        return val
+    return scheme_eval(val.expr, val.env) if isinstance(val, Thunk) else val
 
 def scheme_optimized_eval(expr, env, tail=False):
     """Evaluate Scheme expression EXPR in environment ENV. If TAIL, returns an
@@ -695,7 +688,7 @@ def scheme_open(filename):
         if filename.endswith('.scm'):
             raise SchemeError(str(exc))
     try:
-        return open(filename + '.scm')
+        return open(f'{filename}.scm')
     except IOError as exc:
         raise SchemeError(str(exc))
 

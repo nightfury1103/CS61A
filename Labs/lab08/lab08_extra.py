@@ -140,27 +140,13 @@ def trade(first, second):
             m += 1
         elif sum(first[:m]) > sum(second[:n]):
             n += 1
-    if deal:
-        first[:m], second[:n] = second[:n], first[:m]
-        return 'Deal!'
-    else:
+    if not deal:
         return 'No deal!'
 
 
 
-# Sol 2
-
-    m, n = 1, 1
-    while m <= len(first):
-        n = 1  # make sure the second list counts from the first element
-        while n <= len(second):
-            if sum(first[:m]) == sum(second[:n]):
-                first[:m], second[:n] = second[:n], first[:m]
-                return 'Deal!'
-            n += 1
-        m += 1
-    else:
-        return 'No deal!'
+    first[:m], second[:n] = second[:n], first[:m]
+    return 'Deal!'
 
 
 def zap(n):  # Order of growth = θ(n ** 2)
